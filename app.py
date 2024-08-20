@@ -15,34 +15,35 @@ channel_open = True
 
 @app.route('/microscope_ready', methods=['POST'])
 def microscope_ready():
-    global microscope_ready
+    global microscope_ready, notebook_ready
     microscope_ready = True
-    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
+    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
 
 
 @app.route('/notebook_ready', methods=['POST'])
 def notebook_ready():
-    global notebook_ready
+    global microscope_ready, notebook_ready
     notebook_ready = True
-    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
+    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
 
 @app.route('/microscope_ready', methods=['POST'])
 def microscope_stop():
-    global microscope_ready
+    global microscope_ready, notebook_ready
     microscope_ready = False
-    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
+    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
 
 
 @app.route('/notebook_ready', methods=['POST'])
 def notebook_stop():
-    global notebook_ready
+    global microscope_ready, notebook_ready
     notebook_ready = False
-    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
+    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
 
 
 @app.route('/status', methods=['GET'])
 def check_status():
-    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
+    global microscope_ready, notebook_ready
+    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
 
 @app.route('/send_coordinates', methods=['POST'])
 def receive_array():
@@ -50,7 +51,7 @@ def receive_array():
     data = request.get_json()
     coordinates = np.array(data["coordinates"])  # Convert list to NumPy array
     notebook_ready = False
-    return jsonify({"status": "Coordinates uploaded", "received_array_shape": coordinates.shape})
+    return jsonify({'status': "Coordinates uploaded", 'received_array_shape': coordinates.shape})
 
 @app.route('/get_coordinates', methods=['POST'])
 def send_coordinates():
