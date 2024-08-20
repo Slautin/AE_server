@@ -1,12 +1,12 @@
 # flask_server.py
-from flask import Flask, request, jsonify, json
+from flask import Flask, request, jsonify
 import numpy as np
 
 app = Flask(__name__)
 
 # Global variables to track readiness, data exchange, and communication state
-microscope_ready = False
-notebook_ready = False
+m_ready = False
+n_ready = False
 coordinates = None
 location = None
 response = None
@@ -15,50 +15,50 @@ channel_open = True
 
 @app.route('/microscope_ready', methods=['POST'])
 def microscope_ready():
-    global microscope_ready, notebook_ready
-    microscope_ready = True
-    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
+    global m_ready, n_ready
+    m_ready = True
+    return jsonify({'microscope': m_ready, 'notebook': n_ready})
 
 
 @app.route('/notebook_ready', methods=['POST'])
 def notebook_ready():
-    global microscope_ready, notebook_ready
-    notebook_ready = True
-    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
+    global m_ready, n_ready
+    n_ready = True
+    return jsonify({'microscope': m_ready, 'notebook': n_ready})
 
-@app.route('/microscope_ready', methods=['POST'])
+@app.route('/microscope_stop', methods=['POST'])
 def microscope_stop():
-    global microscope_ready, notebook_ready
-    microscope_ready = False
-    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
+    global m_ready, n_ready
+    m_ready = False
+    return jsonify({'microscope': m_ready, 'notebook': n_ready})
 
 
-@app.route('/notebook_ready', methods=['POST'])
+@app.route('/notebook_stop', methods=['POST'])
 def notebook_stop():
-    global microscope_ready, notebook_ready
-    notebook_ready = False
-    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
+    global m_ready, n_ready
+    n_ready = False
+    return jsonify({'microscope': m_ready, 'notebook': n_ready})
 
 
 @app.route('/status', methods=['GET'])
 def check_status():
-    global microscope_ready, notebook_ready
-    return jsonify({'microscope': microscope_ready, 'notebook': notebook_ready})
+    global m_ready, n_ready
+    return jsonify({'microscope': m_ready, 'notebook': n_ready})
 
 @app.route('/send_coordinates', methods=['POST'])
 def receive_array():
-    global coordinates, notebook_ready
+    global coordinates, n_ready
     data = request.get_json()
     coordinates = np.array(data["coordinates"])  # Convert list to NumPy array
-    notebook_ready = False
+    n_ready = False
     return jsonify({'status': "Coordinates uploaded", 'received_array_shape': coordinates.shape})
 
 @app.route('/get_coordinates', methods=['POST'])
 def send_coordinates():
-    global notebook_ready
+    global n_ready
     if coordinates is not None:
         coord = coordinates
-        notebook_ready = True
+        n_ready = True
         return jsonify({"status": "Coordinates sent", "coordinates": coord})
 
 @app.route('/check_coordinates', methods=['GET'])
@@ -70,40 +70,40 @@ def check_coordinates():
 
 @app.route('/send_message', methods=['POST'])
 def receive_message():
-    global location, response, microscope_ready, notebook_ready
+    global location, response, m_ready, n_ready
     data = request.get_json()
     sender = data.get("sender")
     message = data.get("data")
 
     if sender == "microscope":
         response = message
-        notebook_ready = False
+        n_ready = False
         if message == 'END':
-            microscope_ready = False
+            m_ready = False
     elif sender == "notebook":
         location = message
-        microscope_ready = False
+        m_ready = False
         if message == 'END':
-            notebook_ready = False
+            n_ready = False
 
     return jsonify({"status": "Message received", "message": message})
 
 
-@app.route('/receive_message', methods=['GET'])
+@app.route('/get_message', methods=['GET'])
 def send_message():
-    global location, response, microscope_ready, notebook_ready
+    global location, response, m_ready, n_ready
     requester = request.args.get("requester")
 
     if requester == "microscope" and location:
         msg = location
         location = None  # Clear the message after sending
-        microscope_ready = True
+        m_ready = True
         return jsonify({"reponse": msg})
 
     if requester == "notebook" and response:
         msg = response
         response = None  # Clear the message after sending
-        notebook_ready = True
+        n_ready = True
         return jsonify({"location": msg})
 
     return jsonify({"message": None})
