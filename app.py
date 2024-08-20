@@ -1,5 +1,5 @@
 # flask_server.py
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
 import numpy as np
 
 app = Flask(__name__)
@@ -17,32 +17,32 @@ channel_open = True
 def microscope_ready():
     global microscope_ready
     microscope_ready = True
-    return jsonify({"microscope": microscope_ready, "notebook": notebook_ready})
+    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
 
 
 @app.route('/notebook_ready', methods=['POST'])
 def notebook_ready():
     global notebook_ready
     notebook_ready = True
-    return jsonify({"microscope": microscope_ready, "notebook": notebook_ready})
+    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
 
 @app.route('/microscope_ready', methods=['POST'])
 def microscope_stop():
     global microscope_ready
     microscope_ready = False
-    return jsonify({"microscope": microscope_ready, "notebook": notebook_ready})
+    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
 
 
 @app.route('/notebook_ready', methods=['POST'])
 def notebook_stop():
     global notebook_ready
     notebook_ready = False
-    return jsonify({"microscope": microscope_ready, "notebook": notebook_ready})
+    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
 
 
 @app.route('/status', methods=['GET'])
 def check_status():
-    return jsonify({"microscope": microscope_ready, "notebook": notebook_ready})
+    return jsonify({"microscope": json.dumps(microscope_ready), "notebook": json.dumps(notebook_ready)})
 
 @app.route('/send_coordinates', methods=['POST'])
 def receive_array():
