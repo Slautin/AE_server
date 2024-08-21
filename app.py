@@ -132,13 +132,13 @@ def send_message():
     global location, response, m_ready, n_ready
     requester = request.args.get("requester")
 
-    if requester == "microscope" and location:
+    if (requester == "microscope") and (location != None):
         msg = location
         location = None  # Clear the message after sending
         m_ready = True
         return jsonify({"status": True, "location": msg})
 
-    if requester == "notebook" and response:
+    if (requester == "notebook") and (response != None):
         msg = response
         response = None  # Clear the message after sending
         n_ready = True
