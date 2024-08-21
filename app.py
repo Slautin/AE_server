@@ -53,17 +53,19 @@ def check_status():
 def receive_array():
     global coordinates, n_ready
     data = request.get_json()
-    coordinates = np.array(data["coordinates"])  # Convert list to NumPy array
+    coordinates = data["coordinates"]  # Convert list to NumPy array
     n_ready = False
     return jsonify({'status': "Coordinates uploaded", 'received_array_shape': coordinates.shape})
 
 @app.route('/get_coordinates', methods=['GET'])
 def send_coordinates():
-    global n_ready
+    global n_ready, coordinates
     if coordinates is not None:
         coord = coordinates
         n_ready = True
         return jsonify({"status": "Coordinates sent", "coordinates": coord})
+    else:
+        return jsonify({"status": "None", "coordinates": []})
 
 @app.route('/check_coordinates', methods=['GET'])
 def check_coordinates():
