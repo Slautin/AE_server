@@ -13,6 +13,10 @@ response = None
 channel_open = True
 
 
+@app.route('/', methods=['GET'])
+def basic():
+    pass
+
 @app.route('/microscope_ready', methods=['POST'])
 def microscope_ready():
     global m_ready, n_ready
@@ -53,7 +57,7 @@ def receive_array():
     n_ready = False
     return jsonify({'status': "Coordinates uploaded", 'received_array_shape': coordinates.shape})
 
-@app.route('/get_coordinates', methods=['POST'])
+@app.route('/get_coordinates', methods=['GET'])
 def send_coordinates():
     global n_ready
     if coordinates is not None:
