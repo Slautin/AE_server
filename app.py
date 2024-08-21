@@ -10,7 +10,7 @@ n_ready = False
 coordinates = None
 location = None
 response = None
-flag = False
+flag = None
 
 
 @app.route('/', methods=['GET'])
@@ -19,7 +19,29 @@ def basic():
     coordinates = None
     location = None
     response = None
-    return jsonify({'status': 'Server restarted'})
+    flag = None
+    return jsonify({'status': True})
+
+@app.route('/flag_up', methods=['GET'])
+def flag_u():
+    global flag
+    flag = True
+    return jsonify({'status': True})
+
+@app.route('/flag_down', methods=['GET'])
+def flag_d():
+    global flag
+    flag = False
+    return jsonify({'status': True})
+
+@app.route('/flag', methods=['GET'])
+def flag_check():
+    global flag
+    if flag == None:
+        fl = 'None'
+    else:
+        fl = flag
+    return jsonify({'status': fl})
 
 @app.route('/microscope_ready', methods=['POST'])
 def microscope_ready():
@@ -96,7 +118,7 @@ def receive_message():
         if message == 'END':
             n_ready = False
 
-    return jsonify({"status": "Message received", "message": message})
+    return jsonify({"status": True, "message": message})
 
 
 @app.route('/get_message', methods=['GET'])
@@ -108,15 +130,15 @@ def send_message():
         msg = location
         location = None  # Clear the message after sending
         m_ready = True
-        return jsonify({"reponse": msg})
+        return jsonify({"status": True, "response": msg})
 
     if requester == "notebook" and response:
         msg = response
         response = None  # Clear the message after sending
         n_ready = True
-        return jsonify({"location": msg})
+        return jsonify({"status": True, "location": msg})
 
-    return jsonify({"message": None})
+    return jsonify({"status": False})
 
 
 if __name__ == '__main__':
