@@ -28,6 +28,12 @@ def flag_u():
     flag = True
     return jsonify({'status': True})
 
+@app.route('/flag_non', methods=['GET'])
+def flag_n():
+    global flag
+    flag = None
+    return jsonify({'status': True})
+
 @app.route('/flag_down', methods=['GET'])
 def flag_d():
     global flag
@@ -130,13 +136,13 @@ def send_message():
         msg = location
         location = None  # Clear the message after sending
         m_ready = True
-        return jsonify({"status": True, "response": msg})
+        return jsonify({"status": True, "location": msg})
 
     if requester == "notebook" and response:
         msg = response
         response = None  # Clear the message after sending
         n_ready = True
-        return jsonify({"status": True, "location": msg})
+        return jsonify({"status": True, "response": msg})
 
     return jsonify({"status": False})
 
