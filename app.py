@@ -10,12 +10,16 @@ n_ready = False
 coordinates = None
 location = None
 response = None
-channel_open = True
+flag = False
 
 
 @app.route('/', methods=['GET'])
 def basic():
-    pass
+    global m_ready, n_ready, coordinates, location, response
+    coordinates = None
+    location = None
+    response = None
+    return jsonify({'status': 'Server restarted'})
 
 @app.route('/microscope_ready', methods=['POST'])
 def microscope_ready():
@@ -55,7 +59,7 @@ def receive_array():
     data = request.get_json()
     coordinates = np.array(data["coordinates"])  # Convert list to NumPy array
     n_ready = False
-    return jsonify({'status': "Coordinates uploaded", 'received_array_shape': coordinates.shape})
+    return jsonify({'status': True, 'received_array_shape': coordinates.shape})
 
 @app.route('/get_coordinates', methods=['GET'])
 def send_array():
@@ -63,16 +67,16 @@ def send_array():
     if coordinates is not None:
         coord = coordinates.tolist()
         n_ready = True
-        return jsonify({"status": "Coordinates sent", "coordinates": coord})
+        return jsonify({"status": True, "coordinates": coord})
     else:
-        return jsonify({"status": "None", "coordinates": []})
+        return jsonify({"status": False, "coordinates": []})
 
 @app.route('/check_coordinates', methods=['GET'])
 def check_coordinates():
     if coordinates is not None:
-        return jsonify({"status": "Coordinates exists", "shape": coordinates.shape})
+        return jsonify({"status": True, "shape": coordinates.shape})
     else:
-        return jsonify({"status": "No coordinates received"})
+        return jsonify({"status": False})
 
 @app.route('/send_message', methods=['POST'])
 def receive_message():
