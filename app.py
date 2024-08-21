@@ -15,7 +15,7 @@ flag = None
 
 @app.route('/', methods=['GET'])
 def basic():
-    global m_ready, n_ready, coordinates, location, response
+    global m_ready, n_ready, coordinates, location, response, flag
     coordinates = None
     location = None
     response = None
@@ -83,7 +83,7 @@ def receive_array():
     n_ready = False
     return jsonify({'status': True, 'received_array_shape': coordinates.shape})
 
-@app.route('/get_coordinates', methods=['GET'])
+@app.route('/get_coordinates', methods=['POST'])
 def send_array():
     global n_ready, coordinates
     if coordinates is not None:
