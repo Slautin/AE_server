@@ -83,7 +83,7 @@ def receive_array():
     n_ready = False
     return jsonify({'status': True, 'received_array_shape': coordinates.shape})
 
-@app.route('/get_coordinates', methods=['POST'])
+@app.route('/get_coordinates', methods=['GET'])
 def send_array():
     global n_ready, coordinates
     if coordinates is not None:
@@ -121,7 +121,7 @@ def receive_message():
     return jsonify({"status": True, "message": message})
 
 
-@app.route('/get_message', methods=['GET'])
+@app.route('/get_message', methods=['POST'])
 def send_message():
     global location, response, m_ready, n_ready
     requester = request.args.get("requester")
