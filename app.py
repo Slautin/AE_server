@@ -114,12 +114,12 @@ def receive_message():
     message = data.get("data")
 
     if sender == "microscope":
-        response = message
+        location = message
         n_ready = False
         if message == 'END':
             m_ready = False
     elif sender == "notebook":
-        location = message
+        response = message
         m_ready = False
         if message == 'END':
             n_ready = False
