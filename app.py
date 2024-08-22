@@ -130,7 +130,8 @@ def receive_message():
 @app.route('/get_message', methods=['POST'])
 def send_message():
     global location, response, m_ready, n_ready
-    requester = request.args.get("requester")
+    data = request.get_json()
+    requester = data.get("requester")
 
     if (requester == "microscope") and (location != None):
         msg = location
