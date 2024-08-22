@@ -144,7 +144,7 @@ def send_message():
         n_ready = True
         return jsonify({"status": True, "response": msg})
 
-    return jsonify({"status": False})
+    return jsonify({"status": False, "requester": requester, "loc": location, "resp": response})
 
 
 if __name__ == '__main__':
